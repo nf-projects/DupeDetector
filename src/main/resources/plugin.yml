@@ -1,0 +1,8 @@
+name: DupeDetector
+version: '${project.version}'
+main: me.kicksquare.dupedetector.DupeDetector
+api-version: 1.19
+commands:
+  testnbt:
+  dupedetector:
+  dd:

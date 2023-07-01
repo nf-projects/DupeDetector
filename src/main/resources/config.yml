@@ -1,0 +1,34 @@
+# The interval at which the plugin will check for dupes
+scheduler-interval-seconds: 30 # requires restart
+
+# Where to check for duped items
+# This also works across locations, so if containers and player inventories are enabled,
+# it will alert if there is a duped item in a container that is also in a player inventory
+scan-player-inventories: true
+scan-player-enderchests: true
+scan-containers: false #chests, shulker boxes, etc.
+
+# Only items that match one of these criteria will be checked for dupes
+# Set name, material, or lore to "IGNORE" to ignore that criteria
+items:
+  - example:
+      name: Legendary Sword
+      material: NETHERITE_SWORD
+      lore: 'Legendary'
+
+webhook-url: "WEBHOOK_URL_HERE"
+
+# Will not send a webhook of the same identifier more than once in this many seconds
+webhook-cooldown-seconds: 60 # requires restart
+
+# The webhook will send a list of player names that are close to
+# the person that duped the item. This is the distance in blocks
+close-proximity-distance: 50
+
+# Players with dupedetector.admin permission will bypass detection
+bypass-permission: false
+# On top of bypassing detection, any duped items in a player's inventory
+# with the bypass permission will automatically be assigned a new
+# random dupe id
+# This is useful when making crate items using middle-click in creative mode, for example
+generate-new-dupe-id: false
