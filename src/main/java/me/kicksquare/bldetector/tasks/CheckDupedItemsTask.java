@@ -227,12 +227,12 @@ public class CheckDupedItemsTask {
     }
 
     public static class DupeResult {
-        private ItemStack itemStack;
-        private String identifier;
-        private List<Player> dupedPlayers;
+        private final ItemStack itemStack;
+        private final String identifier;
+        private final List<Player> dupedPlayers;
 
         private int quantity;
-        private DupeLocation dupeLocation;
+        private final DupeLocation dupeLocation;
 
         public DupeResult(ItemStack itemStack, String identifier, List<Player> dupedPlayers, int quantity, DupeLocation dupeLocation) {
             this.itemStack = itemStack;

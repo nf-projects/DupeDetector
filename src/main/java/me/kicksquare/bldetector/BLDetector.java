@@ -19,9 +19,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class BLDetector extends JavaPlugin {
 //    TODO
-//    - add a command to create an item and add it to config automatically
-//    - hide plugin name from command tab
-// - add a mode that automatically detects any items with custom lore or name
 // -playervaultsx support
 
     private Config mainConfig;

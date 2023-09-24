@@ -31,7 +31,7 @@ public class TestNBTCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length == 3 && args[0].equalsIgnoreCase("set")) {
+        if (args.length == 3 && args[0].equalsIgnoreCase("set")) {
             Player p = (Player) commandSender;
             String key = args[1];
             String value = args[2];
@@ -45,11 +45,11 @@ public class TestNBTCommand implements CommandExecutor {
             return true;
         }
 
-        if(args.length == 1 && args[0].equalsIgnoreCase("checkitem")) {
+        if (args.length == 1 && args[0].equalsIgnoreCase("checkitem")) {
             Player p = (Player) commandSender;
             ItemStack item = p.getInventory().getItemInMainHand();
 
-            if(ItemCheckUtil.shouldAddIdentifierToItem(plugin.getMainConfig(), item)) {
+            if (ItemCheckUtil.shouldAddIdentifierToItem(plugin.getMainConfig(), item)) {
                 p.sendMessage("Item should have identifier added");
             } else {
                 p.sendMessage("Item should not have identifier added");
@@ -63,9 +63,9 @@ public class TestNBTCommand implements CommandExecutor {
         ItemStack item = p.getInventory().getItemInMainHand();
         NBTItem nbtItem = new NBTItem(item);
 
-        p.sendMessage("Item in hand: " + item.getType().toString());
+        p.sendMessage("Item in hand: " + item.getType());
         p.sendMessage("Item in hand has NBT: " + nbtItem.hasNBTData());
-        p.sendMessage("NBT of item in hand: " + nbtItem.toString());
+        p.sendMessage("NBT of item in hand: " + nbtItem);
         p.sendMessage("Item in hand has NBT key 'test': " + nbtItem.hasKey("test"));
         p.sendMessage("Item in hand value of NBT key 'test': " + nbtItem.getString("test"));
 

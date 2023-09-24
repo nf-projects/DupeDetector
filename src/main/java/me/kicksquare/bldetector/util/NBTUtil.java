@@ -14,7 +14,7 @@ public class NBTUtil {
 
     public static String getNBTString(ItemStack item, String key) {
         NBTItem nbtItem = new NBTItem(item);
-        String s =  nbtItem.getString(key);
+        String s = nbtItem.getString(key);
 
         if (s == null || s.isEmpty()) {
             return null;
