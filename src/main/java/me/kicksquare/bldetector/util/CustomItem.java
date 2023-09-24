@@ -1,4 +1,4 @@
-package me.kicksquare.dupedetector.util;
+package me.kicksquare.bldetector.util;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.representer.Representer;

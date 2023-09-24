@@ -1,8 +1,8 @@
-name: DupeDetector
+name: BLDetector
 version: '${project.version}'
-main: me.kicksquare.dupedetector.DupeDetector
+main: me.kicksquare.bldetector.BLDetector
 api-version: 1.19
 commands:
   testnbt:
-  dupedetector:
+  bldetector:
   dd:

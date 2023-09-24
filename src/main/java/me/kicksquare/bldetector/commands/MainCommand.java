@@ -1,8 +1,8 @@
-package me.kicksquare.dupedetector.commands;
+package me.kicksquare.bldetector.commands;
 
-import me.kicksquare.dupedetector.DupeDetector;
-import me.kicksquare.dupedetector.tasks.CheckDupedItemsTask;
-import me.kicksquare.dupedetector.util.NBTUtil;
+import me.kicksquare.bldetector.BLDetector;
+import me.kicksquare.bldetector.tasks.CheckDupedItemsTask;
+import me.kicksquare.bldetector.util.NBTUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,15 +15,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class MainCommand implements CommandExecutor {
-    private DupeDetector plugin;
+    private BLDetector plugin;
 
-    public MainCommand(DupeDetector plugin) {
+    public MainCommand(BLDetector plugin) {
         this.plugin = plugin;
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender instanceof Player && !sender.hasPermission("dupedetector.admin")) {
+        if (sender instanceof Player && !sender.hasPermission("bldetector.admin")) {
             sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
             return true;
         }
@@ -94,7 +94,7 @@ public class MainCommand implements CommandExecutor {
             }
         }
 
-        sender.sendMessage(ChatColor.GREEN + "Running DupeDetector v" + plugin.getDescription().getVersion());
+        sender.sendMessage(ChatColor.GREEN + "Running BLDetector v" + plugin.getDescription().getVersion());
         sender.sendMessage(ChatColor.GREEN + "Commands:");
         sender.sendMessage(ChatColor.AQUA + "/dd reload - Reloads the config");
         sender.sendMessage(ChatColor.AQUA + "/dd createitem - Creates an item based on the item in your hand and adds it to config");

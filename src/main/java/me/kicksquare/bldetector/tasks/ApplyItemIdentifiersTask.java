@@ -1,8 +1,8 @@
-package me.kicksquare.dupedetector.tasks;
+package me.kicksquare.bldetector.tasks;
 
-import me.kicksquare.dupedetector.DupeDetector;
-import me.kicksquare.dupedetector.util.ItemCheckUtil;
-import me.kicksquare.dupedetector.util.NBTUtil;
+import me.kicksquare.bldetector.BLDetector;
+import me.kicksquare.bldetector.util.ItemCheckUtil;
+import me.kicksquare.bldetector.util.NBTUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 
 public class ApplyItemIdentifiersTask {
-    public static void applyItemIdentifiers(DupeDetector plugin) {
+    public static void applyItemIdentifiers(BLDetector plugin) {
         // get all online players
         // loop through all online players
         // get their inventory

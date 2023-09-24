@@ -1,4 +1,4 @@
-package me.kicksquare.dupedetector.util;
+package me.kicksquare.bldetector.util;
 
 // FOR REFERENCE, THIS IS THE CONFIG STRUCTURE
 //# Will scan inventories for the following items

@@ -1,9 +1,9 @@
-package me.kicksquare.dupedetector.commands;
+package me.kicksquare.bldetector.commands;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import me.kicksquare.dupedetector.DupeDetector;
-import me.kicksquare.dupedetector.util.ItemCheckUtil;
-import me.kicksquare.dupedetector.util.NBTUtil;
+import me.kicksquare.bldetector.BLDetector;
+import me.kicksquare.bldetector.util.ItemCheckUtil;
+import me.kicksquare.bldetector.util.NBTUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class TestNBTCommand implements CommandExecutor {
-    private final DupeDetector plugin;
+    private final BLDetector plugin;
 
-    public TestNBTCommand(DupeDetector plugin) {
+    public TestNBTCommand(BLDetector plugin) {
         this.plugin = plugin;
     }
 
@@ -26,7 +26,7 @@ public class TestNBTCommand implements CommandExecutor {
         }
 
         // permission check
-        if (!commandSender.hasPermission("dupedetector.testnbt")) {
+        if (!commandSender.hasPermission("bldetector.testnbt")) {
             commandSender.sendMessage("You do not have permission to use this command!");
             return true;
         }

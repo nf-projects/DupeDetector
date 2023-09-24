@@ -1,4 +1,4 @@
-package me.kicksquare.dupedetector.util;
+package me.kicksquare.bldetector.util;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.inventory.ItemStack;

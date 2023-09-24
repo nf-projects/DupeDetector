@@ -1,4 +1,4 @@
-package me.kicksquare.dupedetector;
+package me.kicksquare.bldetector;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -6,22 +6,23 @@ import de.leonhard.storage.Config;
 import de.leonhard.storage.SimplixBuilder;
 import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
-import me.kicksquare.dupedetector.commands.MainCommand;
-import me.kicksquare.dupedetector.commands.TestNBTCommand;
-import me.kicksquare.dupedetector.tasks.ApplyItemIdentifiersTask;
-import me.kicksquare.dupedetector.tasks.CheckDupedItemsTask;
-import me.kicksquare.dupedetector.util.ItemCheckUtil;
+import me.kicksquare.bldetector.commands.MainCommand;
+import me.kicksquare.bldetector.commands.TestNBTCommand;
+import me.kicksquare.bldetector.tasks.ApplyItemIdentifiersTask;
+import me.kicksquare.bldetector.tasks.CheckDupedItemsTask;
+import me.kicksquare.bldetector.util.ItemCheckUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-public final class DupeDetector extends JavaPlugin {
+public final class BLDetector extends JavaPlugin {
 //    TODO
 //    - add a command to create an item and add it to config automatically
 //    - hide plugin name from command tab
 // - add a mode that automatically detects any items with custom lore or name
+// -playervaultsx support
 
     private Config mainConfig;
 
@@ -34,7 +35,7 @@ public final class DupeDetector extends JavaPlugin {
     @Override
     public void onEnable() {
         getCommand("testnbt").setExecutor(new TestNBTCommand(this));
-        getCommand("dupedetector").setExecutor(new MainCommand(this));
+        getCommand("bldetector").setExecutor(new MainCommand(this));
         getCommand("dd").setExecutor(new MainCommand(this));
 
         mainConfig = SimplixBuilder

@@ -1,11 +1,12 @@
-package me.kicksquare.dupedetector.tasks;
+package me.kicksquare.bldetector.tasks;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookEmbed;
 import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
-import me.kicksquare.dupedetector.DupeDetector;
-import me.kicksquare.dupedetector.util.ItemCheckUtil;
-import me.kicksquare.dupedetector.util.NBTUtil;
+import me.kicksquare.bldetector.BLDetector;
+import me.kicksquare.bldetector.util.ItemCheckUtil;
+import me.kicksquare.bldetector.util.NBTUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -26,13 +27,11 @@ public class CheckDupedItemsTask {
      *
      * @param plugin plugin instance
      */
-    public static void checkDupedItems(DupeDetector plugin) {
+    public static void checkDupedItems(BLDetector plugin) {
         // create a list of known identifiers
-        // get all online players
         // loop through all online players
-        // get their inventory
-        // loop through their inventory
-        // check if the item has an identifier
+        // loop through each player's inventory --> each item
+        // check if the item has an dupe identifier
         // if it does, check if the identifier is in the list of known identifiers
         // if it is, then the item is duped
         // if it isn't, add it to the list of known identifiers
@@ -151,7 +150,7 @@ public class CheckDupedItemsTask {
         dupeResults.clear();
     }
 
-    private static void handleItem(DupeDetector plugin, List<String> knownIdentifiers, List<DupeResult> dupeResults, Player p, ItemStack item, DupeLocation dupeLocation) {
+    private static void handleItem(BLDetector plugin, List<String> knownIdentifiers, List<DupeResult> dupeResults, Player p, ItemStack item, DupeLocation dupeLocation) {
         String identifier = NBTUtil.getNBTString(item, "d_id");
 
         // ignore if it doesnt have an identifier
@@ -160,9 +159,10 @@ public class CheckDupedItemsTask {
         }
 
         // if it's a player inventory and they have the bypass permission
-        if (p != null && p.hasPermission("dupedetector.bypass")) {
+        if (p != null && p.hasPermission("bldetector.bypass")) {
             if (plugin.getMainConfig().getBoolean("generate-new-dupe-id")) {
                 NBTUtil.setNBTString(item, "d_id", UUID.randomUUID().toString());
+                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[BLDETECTOR] &7Auto-generated new d_id for item: ' + item.getType().name())"));
             }
 
             if (plugin.getMainConfig().getBoolean("bypass-permission")) {

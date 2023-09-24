@@ -1,4 +1,5 @@
 # The interval at which the plugin will check for dupes
+# Can be run manually with /dd run
 scheduler-interval-seconds: 30 # requires restart
 
 # Where to check for duped items
@@ -25,10 +26,12 @@ webhook-cooldown-seconds: 60 # requires restart
 # the person that duped the item. This is the distance in blocks
 close-proximity-distance: 50
 
-# Players with dupedetector.admin permission will bypass detection
+# Players with bldetector.admin permission will bypass detection
 bypass-permission: false
 # On top of bypassing detection, any duped items in a player's inventory
 # with the bypass permission will automatically be assigned a new
 # random dupe id
-# This is useful when making crate items using middle-click in creative mode, for example
-generate-new-dupe-id: false
+# This is useful when making new crate items as duplicates
+# using middle-click in creative mode, for example
+# Can be run manually with /dd generate
+generate-new-dupe-id: true
