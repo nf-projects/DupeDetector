@@ -5,19 +5,17 @@ import org.bukkit.inventory.ItemStack;
 
 public class ItemCheckUtil {
 
-    public static boolean shouldAddIdentifierToItem(ItemStack item) {
+    public static boolean isDupableItem(ItemStack item) {
         // returns true if the item has ANY (or multiple) of the following:
-        // - custom name & lore
+        // - custom lore
         // - custom model data
         // - custom nbt
 
         if (item.hasItemMeta()) {
-            if (item.getItemMeta().hasDisplayName() || item.getItemMeta().hasLore()) {
+            if (item.getItemMeta().getLore().size() > 0) {
                 return true;
             }
-        }
 
-        if (item.hasItemMeta()) {
             if (item.getItemMeta().hasCustomModelData()) {
                 return true;
             }

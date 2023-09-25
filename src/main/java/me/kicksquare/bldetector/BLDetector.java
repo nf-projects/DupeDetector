@@ -48,8 +48,6 @@ public final class BLDetector extends JavaPlugin {
         }, 0L, mainConfig.getInt("scheduler-interval-seconds") * 20L);
 
         webhookCooldown = CacheBuilder.newBuilder().expireAfterWrite(mainConfig.getInt("webhook-cooldown-seconds"), TimeUnit.SECONDS).build();
-
-        ItemCheckUtil.loadCustomItems(mainConfig);
     }
 
     public Config getMainConfig() {

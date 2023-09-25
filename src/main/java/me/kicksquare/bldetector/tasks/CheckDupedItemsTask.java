@@ -6,11 +6,7 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import me.kicksquare.bldetector.BLDetector;
 import me.kicksquare.bldetector.util.ItemCheckUtil;
 import me.kicksquare.bldetector.util.NBTUtil;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
@@ -19,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class CheckDupedItemsTask {
     /**
@@ -49,7 +44,7 @@ public class CheckDupedItemsTask {
                     ItemStack item = inv.getItem(i);
 
                     if (item != null) {
-                        handleItem(plugin, knownIdentifiers, dupeResults, p, item, new DupeLocation(LocationType.PLAYER_INVENTORY));
+                        handleItem(plugin, knownIdentifiers, dupeResults, p, item, i, new DupeLocation(LocationType.PLAYER_INVENTORY));
                     }
                 }
             }
@@ -64,7 +59,7 @@ public class CheckDupedItemsTask {
                     ItemStack item = inv.getItem(i);
 
                     if (item != null) {
-                        handleItem(plugin, knownIdentifiers, dupeResults, p, item, new DupeLocation(LocationType.PLAYER_ENDER_CHEST));
+                        handleItem(plugin, knownIdentifiers, dupeResults, p, item, i, new DupeLocation(LocationType.PLAYER_ENDER_CHEST));
                     }
                 }
             }
@@ -79,7 +74,7 @@ public class CheckDupedItemsTask {
                             Container container = (Container) blockState;
                             for (ItemStack item : container.getInventory().getContents()) {
                                 if (item != null) {
-                                    handleItem(plugin, knownIdentifiers, dupeResults, null, item, new DupeLocation(container.getLocation()));
+                                    handleItem(plugin, knownIdentifiers, dupeResults, null, item, -1, new DupeLocation(container.getLocation()));
                                 }
                             }
                         }
@@ -88,8 +83,76 @@ public class CheckDupedItemsTask {
             }
         }
 
-
         // send all dupe results via discord webhook
+        sendToWebhook(plugin, dupeResults);
+
+        knownIdentifiers.clear();
+        dupeResults.clear();
+    }
+
+    private static void handleItem(BLDetector plugin, List<String> knownIdentifiers, List<DupeResult> dupeResults, Player p, ItemStack item, int slotIndex, DupeLocation dupeLocation) {
+        String identifier = NBTUtil.getNBTString(item, "d_id");
+
+        // ignore if it doesnt have an identifier or if it shouldn't have an identifier
+        if (identifier == null || identifier.isEmpty() || !ItemCheckUtil.isDupableItem(item)) {
+            return;
+        }
+
+        // if it's a player inventory and they have the bypass permission
+        if (plugin.getMainConfig().getBoolean("bypass-permission") &&
+                slotIndex != -1 &&
+                p != null &&
+                p.hasPermission("bldetector.bypass")) {
+            if (plugin.getMainConfig().getBoolean("generate-new-dupe-id")) {
+                // generate new dupe IDs for all items in the player's inventory
+                p.getInventory().forEach(item2 -> {
+                    if (item2 != null && ItemCheckUtil.isDupableItem(item2)) {
+                        NBTUtil.setNBTString(item2, "d_id", java.util.UUID.randomUUID().toString());
+                    }
+                });
+
+                p.sendMessage(ChatColor.GREEN + "Generated new identifiers for all items in your inventory.");
+            }
+
+            return;
+        }
+
+        if (knownIdentifiers.contains(identifier)) {
+            // duped item (NO bypass perms!)
+            p.sendMessage("duplicate d_id detected: " + identifier);
+
+            // if there is already a duperesults entry with this identifier, add this player
+            // if necessary and increase the quantity
+            // otherwise, create a new duperesults entry
+
+            boolean found = false;
+            for (DupeResult dupeResult : dupeResults) {
+                if (dupeResult.identifier.equals(identifier)) {
+                    if (!dupeResult.dupedPlayers.contains(p)) {
+                        dupeResult.dupedPlayers.add(p);
+                    }
+                    int itemStackQuantity = item.getAmount();
+
+                    // increase quantity by itemstack quantity
+                    dupeResult.quantity += itemStackQuantity;
+
+                    found = true;
+                    break;
+                }
+            }
+
+            // still not found - add new entry
+            if (!found) {
+                List<Player> dupedPlayers = new ArrayList<>();
+                dupedPlayers.add(p);
+                dupeResults.add(new DupeResult(item, identifier, dupedPlayers, item.getAmount(), dupeLocation));
+            }
+        } else {
+            knownIdentifiers.add(identifier);
+        }
+    }
+
+    private static void sendToWebhook(BLDetector plugin, List<DupeResult> dupeResults) {
         for (DupeResult dupeResult : dupeResults) {
             // if it's currently on cooldown, continue
             if (plugin.getWebhookCooldown().asMap().containsKey(dupeResult.identifier)) {
@@ -145,64 +208,6 @@ public class CheckDupedItemsTask {
             webhookClient.send(embedBuilder.build());
             webhookClient.close();
         }
-
-        knownIdentifiers.clear();
-        dupeResults.clear();
-    }
-
-    private static void handleItem(BLDetector plugin, List<String> knownIdentifiers, List<DupeResult> dupeResults, Player p, ItemStack item, DupeLocation dupeLocation) {
-        String identifier = NBTUtil.getNBTString(item, "d_id");
-
-        // ignore if it doesnt have an identifier
-        if (identifier == null || identifier.isEmpty() || !ItemCheckUtil.shouldAddIdentifierToItem(plugin.getMainConfig(), item)) {
-            return;
-        }
-
-        // if it's a player inventory and they have the bypass permission
-        if (p != null && p.hasPermission("bldetector.bypass")) {
-            if (plugin.getMainConfig().getBoolean("generate-new-dupe-id")) {
-                NBTUtil.setNBTString(item, "d_id", UUID.randomUUID().toString());
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c[BLDETECTOR] &7Auto-generated new d_id for item: ' + item.getType().name())"));
-            }
-
-            if (plugin.getMainConfig().getBoolean("bypass-permission")) {
-                return;
-            }
-        }
-
-        if (knownIdentifiers.contains(identifier)) {
-            // duped item
-            p.sendMessage("duplicate d_id detected: " + identifier);
-
-            // if there is already a duperesults entry with this identifier, add this player
-            // if necessary and increase the quantity
-            // otherwise, create a new duperesults entry
-
-            boolean found = false;
-            for (DupeResult dupeResult : dupeResults) {
-                if (dupeResult.identifier.equals(identifier)) {
-                    if (!dupeResult.dupedPlayers.contains(p)) {
-                        dupeResult.dupedPlayers.add(p);
-                    }
-                    int itemStackQuantity = item.getAmount();
-
-                    // increase quantity by itemstack quantity
-                    dupeResult.quantity += itemStackQuantity;
-
-                    found = true;
-                    break;
-                }
-            }
-
-            // still not found - add new entry
-            if (!found) {
-                List<Player> dupedPlayers = new ArrayList<>();
-                dupedPlayers.add(p);
-                dupeResults.add(new DupeResult(item, identifier, dupedPlayers, item.getAmount(), dupeLocation));
-            }
-        } else {
-            knownIdentifiers.add(identifier);
-        }
     }
 
     private enum LocationType {
@@ -230,9 +235,8 @@ public class CheckDupedItemsTask {
         private final ItemStack itemStack;
         private final String identifier;
         private final List<Player> dupedPlayers;
-
-        private int quantity;
         private final DupeLocation dupeLocation;
+        private int quantity;
 
         public DupeResult(ItemStack itemStack, String identifier, List<Player> dupedPlayers, int quantity, DupeLocation dupeLocation) {
             this.itemStack = itemStack;

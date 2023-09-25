@@ -49,7 +49,7 @@ public class TestNBTCommand implements CommandExecutor {
             Player p = (Player) commandSender;
             ItemStack item = p.getInventory().getItemInMainHand();
 
-            if (ItemCheckUtil.shouldAddIdentifierToItem(plugin.getMainConfig(), item)) {
+            if (ItemCheckUtil.isDupableItem(item)) {
                 p.sendMessage("Item should have identifier added");
             } else {
                 p.sendMessage("Item should not have identifier added");

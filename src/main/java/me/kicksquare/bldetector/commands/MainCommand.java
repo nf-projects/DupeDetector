@@ -2,6 +2,7 @@ package me.kicksquare.bldetector.commands;
 
 import me.kicksquare.bldetector.BLDetector;
 import me.kicksquare.bldetector.tasks.CheckDupedItemsTask;
+import me.kicksquare.bldetector.util.ItemCheckUtil;
 import me.kicksquare.bldetector.util.NBTUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -80,7 +81,7 @@ public class MainCommand implements CommandExecutor {
                     Player p2 = (Player) sender;
 
                     p2.getInventory().forEach(item2 -> {
-                        if (item2 != null) {
+                        if (item2 != null && ItemCheckUtil.isDupableItem(item2)) {
                             NBTUtil.setNBTString(item2, "d_id", java.util.UUID.randomUUID().toString());
                         }
                     });

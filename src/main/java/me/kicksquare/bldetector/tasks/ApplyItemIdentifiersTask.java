@@ -26,7 +26,7 @@ public class ApplyItemIdentifiersTask {
                 ItemStack item = inv.getItem(i);
 
                 if (item != null) {
-                    if (ItemCheckUtil.shouldAddIdentifierToItem(plugin.getMainConfig(), item)) {
+                    if (ItemCheckUtil.isDupableItem(item)) {
                         if (NBTUtil.getNBTString(item, "d_id") != null) {
                             // already has an identifier
                             continue;
