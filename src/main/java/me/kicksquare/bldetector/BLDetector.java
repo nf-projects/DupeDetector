@@ -8,9 +8,9 @@ import de.leonhard.storage.internal.settings.DataType;
 import de.leonhard.storage.internal.settings.ReloadSettings;
 import me.kicksquare.bldetector.commands.MainCommand;
 import me.kicksquare.bldetector.commands.TestNBTCommand;
+import me.kicksquare.bldetector.listener.ItemStackSplitListener;
 import me.kicksquare.bldetector.tasks.ApplyItemIdentifiersTask;
 import me.kicksquare.bldetector.tasks.CheckDupedItemsTask;
-import me.kicksquare.bldetector.util.ItemCheckUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,6 +41,8 @@ public final class BLDetector extends JavaPlugin {
                 .setDataType(DataType.SORTED)
                 .setReloadSettings(ReloadSettings.MANUALLY)
                 .createConfig();
+
+        Bukkit.getPluginManager().registerEvents(new ItemStackSplitListener(this), this);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
             ApplyItemIdentifiersTask.applyItemIdentifiers(this);

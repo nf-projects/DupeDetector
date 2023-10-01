@@ -3,6 +3,8 @@ package me.kicksquare.bldetector.util;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class ItemCheckUtil {
 
     public static boolean isDupableItem(ItemStack item) {
@@ -12,7 +14,8 @@ public class ItemCheckUtil {
         // - custom nbt
 
         if (item.hasItemMeta()) {
-            if (item.getItemMeta().getLore().size() > 0) {
+            // check if there is lore
+            if (Objects.requireNonNull(item.getItemMeta()).getLore() != null && item.getItemMeta().getLore().size() > 0) {
                 return true;
             }
 

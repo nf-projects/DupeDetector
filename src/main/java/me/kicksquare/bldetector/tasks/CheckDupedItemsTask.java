@@ -98,29 +98,28 @@ public class CheckDupedItemsTask {
             return;
         }
 
-        // if it's a player inventory and they have the bypass permission
-        if (plugin.getMainConfig().getBoolean("bypass-permission") &&
-                slotIndex != -1 &&
-                p != null &&
-                p.hasPermission("bldetector.bypass")) {
-            if (plugin.getMainConfig().getBoolean("generate-new-dupe-id")) {
-                // generate new dupe IDs for all items in the player's inventory
-                p.getInventory().forEach(item2 -> {
-                    if (item2 != null && ItemCheckUtil.isDupableItem(item2)) {
-                        NBTUtil.setNBTString(item2, "d_id", java.util.UUID.randomUUID().toString());
-                    }
-                });
+        if (knownIdentifiers.contains(identifier)) {
+            // duped item(s)
+            // if it's a player inventory and they have the bypass permission
+            if (plugin.getMainConfig().getBoolean("bypass-permission") &&
+                    slotIndex != -1 &&
+                    p != null &&
+                    p.hasPermission("bldetector.bypass")) {
+                if (plugin.getMainConfig().getBoolean("generate-new-dupe-id")) {
+                    // generate new dupe IDs for all items in the player's inventory
+                    p.getInventory().forEach(item2 -> {
+                        if (item2 != null && ItemCheckUtil.isDupableItem(item2)) {
+                            NBTUtil.setNBTString(item2, "d_id", java.util.UUID.randomUUID().toString());
+                        }
+                    });
 
-                p.sendMessage(ChatColor.GREEN + "Generated new identifiers for all items in your inventory.");
+                    p.sendMessage(ChatColor.GREEN + "Generated new identifiers for all items in your inventory.");
+                }
+
+                return;
             }
 
-            return;
-        }
-
-        if (knownIdentifiers.contains(identifier)) {
-            // duped item (NO bypass perms!)
-            p.sendMessage("duplicate d_id detected: " + identifier);
-
+            
             // if there is already a duperesults entry with this identifier, add this player
             // if necessary and increase the quantity
             // otherwise, create a new duperesults entry
@@ -178,6 +177,11 @@ public class CheckDupedItemsTask {
                 // get a list of players in close proximity to the player
                 // add to close proximity list if not already in it
                 for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                    // only if they are in the same world
+                    if (!onlinePlayer.getWorld().equals(p.getWorld())) {
+                        continue;
+                    }
+
                     if (onlinePlayer.getLocation().distance(p.getLocation()) <= plugin.getMainConfig().getInt("close-proximity-distance")) {
                         if (!playersInCloseProximity.contains(onlinePlayer)) {
                             playersInCloseProximity.add(onlinePlayer);
@@ -185,6 +189,9 @@ public class CheckDupedItemsTask {
                     }
                 }
             }
+
+            // remove the player who triggered the dupe from the list
+            playersInCloseProximity.removeIf(player -> player.getName().equals(dupeResult.dupedPlayers.get(0).getName()));
 
             String playersInCloseProximityString = playersInCloseProximity.size() > 0 ? String.join(", ", playersInCloseProximity.stream().map(Player::getName).toArray(String[]::new)) : "None";
 
@@ -196,7 +203,7 @@ public class CheckDupedItemsTask {
                             "- **Item Name:** " + dupeResult.itemStack.getItemMeta().getDisplayName() + "\n" +
                             "- **Location:** " + locationString + "\n" +
                             "- **Identifier:** " + dupeResult.identifier + "\n" +
-                            "- **Quantity:** " + dupeResult.quantity + "\n" +
+                            "- **Quantity:** At least " + dupeResult.quantity + "x\n" +
                             "- **# Players:** " + dupeResult.dupedPlayers.size() + "\n" +
                             "- **Duped Player Names:** " + String.join(", ", dupeResult.dupedPlayers.stream().map(Player::getName).toArray(String[]::new)) + "\n " +
                             "- **Players in Close Proximity:** " + playersInCloseProximityString);
@@ -205,6 +212,7 @@ public class CheckDupedItemsTask {
             // add this identifier to cooldown
             plugin.getWebhookCooldown().put(dupeResult.identifier, System.currentTimeMillis() + plugin.getMainConfig().getInt("webhook-cooldown") * 1000L);
 
+            System.out.println("Sending webhook embed to " + plugin.getMainConfig().getString("webhook-url"));
             webhookClient.send(embedBuilder.build());
             webhookClient.close();
         }
